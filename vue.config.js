@@ -10,7 +10,8 @@ module.exports = {
         'common': '@/common',
         'components': '@/components',
         'service': '@/service',
-        'views': '@/views'
+        'views': '@/views',
+        'store': '@/store'
         // router 一般情况下不用配置，因为只有在main.js中引用一次，如果有需要也可以在这里配置
         // 'router': '@/router'
       }
