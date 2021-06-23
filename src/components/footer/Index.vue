@@ -1,10 +1,10 @@
 <template>
     <div class="footer-box">
       <div class="box-left">
-        <van-button type="primary">返回</van-button>
+        <van-button type="warning" round @click="back" >返回</van-button>
       </div>
       <div class="box-right">
-        <van-button type="info">提交</van-button>
+        <van-button type="info" round >提交</van-button>
       </div>
     </div>
 </template>
@@ -15,6 +15,11 @@ export default {
   name: 'Index',
   components: {
     [Button.name]: Button
+  },
+  methods: {
+    back () {
+      history.back();
+    }
   }
 };
 </script>
@@ -22,11 +27,19 @@ export default {
 <style lang="scss" scoped>
   .footer-box {
     display: flex;
-    justify-content: space-between;
+    justify-content:center;
+    align-items: center;
     position: fixed;
     height: 100px;
-    background-color: red;
+    background-color: #fff;
     bottom: 0px;
     width: 100%;
+    border-radius: 10px 10px 0px 0px;
+    .van-button--normal {
+      margin: 0px 10px;
+    }
+    .van-button--round {
+      width: 100px;
+    }
   }
 </style>

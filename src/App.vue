@@ -9,4 +9,7 @@
     padding: 0;
     margin: 0;
   }
+  .van-button--normal{
+    padding: 0 0.39rem;
+  }
 </style>

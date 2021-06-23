@@ -23,7 +23,7 @@ const router = new Router({
       name: 'people',
       component: People,
       meta: {
-        title: '问卷调查'
+        title: '人员问卷'
       }
     },
     {

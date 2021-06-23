@@ -16,29 +16,41 @@
         </div>
       </van-swipe-cell>
     </div>
-      <div class="elder-info">
-        <p>人员问卷</p>
-        <div class="item-box">
-          <van-swipe-cell v-for="(item, index) in peopleList" :key="item.id">
-            <div class="cell-base">
-              <div class="base-left">
-                {{item.text}}
-                <span style="opacity: 0">*</span>
+
+      <scroll ref="wrapper"
+              :listenScroll="true"
+              :pullup="false"
+              @scrollToEnd="scrollToEnd"
+              @setScroll="setScroll"
+              @beforeScroll = "beforeScroll"
+              @scroll="scroll"
+              :data="peopleList"
+      >
+        <div>
+          <p>人员问卷</p>
+          <div class="item-box">
+            <van-swipe-cell v-for="(item, index) in peopleList" :key="index">
+              <div class="cell-base">
+                <div class="base-left">
+                  {{item.text}}
+                  <span style="opacity: 0">*</span>
+                </div>
+                <div class="base-right">
+                  <span>已完成</span>
+                  <van-icon @click="toAddDetail" name="arrow"/>
+                </div>
               </div>
-              <div class="base-right">
-                <span>已完成</span>
-                <van-icon @click="toAddDetail" name="arrow"/>
-              </div>
-            </div>
-            <template #right>
-              <van-button square type="danger" @click="deletePeople(index)" text="删除" />
-            </template>
-          </van-swipe-cell>
+              <template #right>
+                <van-button square type="danger" @click="deletePeople(index)" text="删除" />
+              </template>
+            </van-swipe-cell>
+          </div>
+          <div class="icon-add">
+            <van-button icon="plus" color="#fff" @click="addPeople" type="primary">添加</van-button>
+          </div>
         </div>
-        <div class="icon-add">
-          <van-button icon="plus" color="#fff" @click="addPeople" type="primary">添加</van-button>
-        </div>
-      </div>
+      </scroll>
+
     </div>
     <common-pop :is-show="isShow" :is-allow-close="true" @closePopup="closePopup">
       <van-field
@@ -68,7 +80,8 @@ import { SwipeCell, Cell, Icon, Field, Form, Button, Picker, Popup } from 'vant'
 
 import Footer from 'components/footer/Index';
 import CommonPop from 'components/popup/Index';
-import BScroll from 'better-scroll'
+import Scroll from 'components/scroll/Index';
+import '@vant/touch-emulator';
 
 export default {
   name: 'Home',
@@ -84,10 +97,8 @@ export default {
     [Popup.name]: Popup,
 
     CommonPop,
-    Footer
-  },
-  computed: {
-
+    Footer,
+    Scroll
   },
   data () {
     return {
@@ -125,68 +136,30 @@ export default {
         this.isShow = false;
         this.peopleList.push(value);
       }, 500);
+    },
+    scrollToEnd (scroll) {
+      this.scroll = scroll;
+      console.log('下拉到最底下');
+    },
+    setScroll (scroll) {
+      this.scroll = scroll;
+      console.log('scroll创建成功');
+    },
+    scroll (pos) {
+      console.log(pos);// 监听滚动坐标
+    },
+    beforeScroll () {
+      console.log('滚动之前');
     }
   }
 
 };
 </script>
-
 <style lang="scss" scoped>
+  @import "styles/mixin.scss";
   .home-box {
-    .container {
-      width: 100%;
-      padding: 15px 15px 0px 15px;
-      box-sizing: border-box;
-      background-color: #F7F7F7;
-      height: 100vh;
-      .base-info {
-        height: 100px;
-        p {
-          font-size: 16px;
-          font-weight: 400;
-        }
-        .van-swipe-cell {
-          margin-top: 10px;
-          border-radius: 5px;
-        }
-        .cell-base {
-          font-size: 16px;
-          line-height: 41px;
-          background-color: white;
-          padding: 0 10px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          .base-left {
-            span:first-of-type {
-              vertical-align: sub;
-              color: red;
-            }
-          }
-        }
-        .base-right {
-          color: #999;
-          display: flex;
-          align-items: center;
-          span {
-            margin-right: 10px;
-            display: inline-block;
-          }
-        }
-      }
-      .elder-info {
-        background: blue;
-        margin-top: 10px;
-        @extend .base-info;
-        height: calc( 100vh - 235px);
-        overflow: hidden;
-      }
-      .icon-add {
-        margin-top: 15px;
-        .van-button--normal {
-          color: #999999 !important;
-        }
-      }
-    }
+   .container{
+     @include container
+   }
   }
 </style>

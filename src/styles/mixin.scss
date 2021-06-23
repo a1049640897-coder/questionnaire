@@ -1,0 +1,54 @@
+@mixin container {
+  width: 100%;
+  padding: 15px 14px 0px 15px;
+  box-sizing: border-box;
+  background-color: #F7F7F7;
+  height: 100vh;
+  .base-info {
+    height: 100px;
+    p {
+      font-size: 16px;
+      font-weight: 400;
+    }
+    .van-swipe-cell {
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+    .cell-base {
+      font-size: 16px;
+      line-height: 41px;
+      background-color: white;
+      padding: 0 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .base-left {
+        span:first-of-type {
+          vertical-align: sub;
+          color: red;
+        }
+      }
+    }
+    .base-right {
+      color: #999;
+      display: flex;
+      align-items: center;
+      span {
+        margin-right: 10px;
+        display: inline-block;
+      }
+    }
+  }
+  .wrapper {
+    margin-top: 10px;
+    @extend .base-info;
+    height: calc( 100vh - 100px);
+    overflow: hidden;
+  }
+  .icon-add {
+    margin-top: 15px;
+    .van-button--normal {
+      color: #999999 !important;
+    }
+  }
+}
