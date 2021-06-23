@@ -7,7 +7,8 @@ import getters from './getters';
 Vue.use(Vuex);
 
 const state = {
-  baseInfoIsCommited: false
+  baseInfoIsCommited: false,
+  peopleList: []
 };
 
 const store = new Vuex.Store({

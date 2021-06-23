@@ -1,3 +1,4 @@
+'use strict';
 module.exports = {
   // 先写一个configureWebpack 表示你准备配置webpageconfig
   configureWebpack: {
@@ -11,10 +12,25 @@ module.exports = {
         'components': '@/components',
         'service': '@/service',
         'views': '@/views',
-        'store': '@/store'
+        'store': '@/store',
+        'apis': '@/apis',
+        'utils': '@/utils'
         // router 一般情况下不用配置，因为只有在main.js中引用一次，如果有需要也可以在这里配置
         // 'router': '@/router'
       }
     }
+  },
+  devServer: {
+    proxy: {
+      '/lci': {
+        // target: 'https://api.tianlunzhimei.com',
+        target: 'http://sinyee.f3322.net:18080',
+        changeOrigin: true,
+        secure: false,
+        pathRewrite: {
+          // '^/lci': ''
+        }
+      }
+    }
   }
-}
+};

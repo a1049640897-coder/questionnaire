@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 const Home = () => import('views/home/Index.vue'); // 首页
+const People = () => import('views/peoplePage/Index.vue'); // 首页
 const Test = () => import('views/test/Index.vue');
 
 Vue.use(Router);
@@ -13,6 +14,14 @@ const router = new Router({
       path: '/',
       name: 'home',
       component: Home,
+      meta: {
+        title: '问卷调查'
+      }
+    },
+    {
+      path: '/people',
+      name: 'people',
+      component: People,
       meta: {
         title: '问卷调查'
       }

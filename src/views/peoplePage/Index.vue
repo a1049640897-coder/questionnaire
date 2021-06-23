@@ -1,6 +1,6 @@
 <template>
-    <div class="back-box">
-
+    <div class="people-box">
+    人员
     </div>
 </template>
 
@@ -10,6 +10,6 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 
 </style>

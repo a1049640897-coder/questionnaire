@@ -1,6 +1,9 @@
 <template>
     <div class="popup-box">
-      <van-popup v-model="isShow" :close-on-click-overlay="false">
+      <van-popup v-model="isShow"  v-if="isAllowClose" :close-on-click-overlay="false" @click-overlay="closePopup">
+        <slot></slot>
+      </van-popup>
+      <van-popup v-model="isShow" :close-on-click-overlay="false" v-else >
         <slot></slot>
       </van-popup>
     </div>
@@ -21,6 +24,12 @@ export default {
     isAllowClose: {
       type: Boolean,
       default: true
+    }
+  },
+  methods: {
+    closePopup () {
+      console.info('子组件点击了');
+      this.$emit('closePopup');
     }
   }
 };

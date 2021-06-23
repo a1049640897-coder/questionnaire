@@ -2,7 +2,11 @@ import { Notify } from 'vant';
 import axios from 'axios';
 
 /* 测试 */
-const baseURL = 'http://sinyee.f3322.net:18080';
+import { host } from 'utils/host';
+import { generateUUID, getDev } from 'utils/functions';
+
+let baseURL = `${host[`api-host-${getDev()}`]}${host[`api-base-${getDev()}`]}/`;
+console.log('baseUrl', baseURL);
 const service = axios.create({
   baseURL: baseURL,
   timeout: 60000
@@ -11,7 +15,10 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     (config.headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'client-type': 2,
+      'timestamp': new Date().getTime(),
+      'nonce': generateUUID()
     });
     return config;
   },
