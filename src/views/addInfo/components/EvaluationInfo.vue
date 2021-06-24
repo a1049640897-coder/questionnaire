@@ -1,20 +1,22 @@
 <template>
   <div>
-    <div class="evaluate-info-box">
+    <div class="evalute-info-box">
+      <div class="title">
+       {{title}}
+      </div>
       <scroll ref="wrapper"
               :listenScroll="true"
               :pullup="false"
               :data="list">
-        <div>
-          <div class="item-box" v-for="(item,index) in list" :key="index">
-            <h4>{{item.stemName}}</h4>
-            <div class="box-wrapper">
-              <div class="item-box" v-for="(nItem,nIndex) in item.stemList" :key="nItem.stemId">
-                <h5>{{nItem.stemName}}</h5>
-                <div class="item-option">
-                  <van-radio-group v-model="nItem.radio" @change="checkData" direction="horizontal" >
-                    <van-radio :name="zItem.optionId" shape="square" v-for="(zItem,zIndex) in nItem.optionList" :key="zIndex">{{zItem.optionName}}</van-radio>
-                  </van-radio-group>
+        <div class="box">
+          <div class="item-box" v-for="(zItem,zIndex) in list" :key="zIndex">
+            <div v-for="(item,index) in zItem.stemList">
+              <div class="box-title">
+                {{item.stemName}}
+              </div>
+              <div class="box-btn">
+                <div :class="nItem.isChecked?activeBtn:radioBtn"  @click="checkData(index,nIndex,nItem)" v-for="(nItem,nIndex) in item.optionList" :key="nIndex">
+                  {{nItem.optionName}}
                 </div>
               </div>
             </div>
@@ -28,17 +30,18 @@
 </template>
 
 <script>
-import { RadioGroup, Radio, Form, Field } from 'vant';
+import { RadioGroup, Radio, Form, Field, Notify } from 'vant';
 import Scroll from 'components/scroll/Index';
 import Footer from 'components/footer/Index';
 import { getCustomerReport } from 'apis/people/index.js';
-
 export default {
   name: 'BasicInfo',
   data () {
     return {
-      radio: '',
-      list: []
+      list: [],
+      activeBtn: 'active-radio-btn',
+      radioBtn: 'radio-btn',
+      title: ''
     };
   },
   components: {
@@ -51,13 +54,36 @@ export default {
     Scroll
   },
   methods: {
-    checkData (e) {
-      console.log('回调参数', e);
+    checkData (index, nIndex, val) {
+      console.info('点击的数据', index, nIndex, val);
+      console.info('点击后面的数据', this.list);
+      this.list.forEach((v, i) => {
+        v.stemList.forEach((n, z) => {
+          if (z === index) {
+            n.optionList.forEach((m, k) => {
+              if (k === nIndex) {
+                this.$set(m, 'isChecked', true);
+              } else {
+                this.$set(m, 'isChecked', false);
+              }
+            });
+          }
+        });
+      });
     },
     async getData () {
       const { data } = await getCustomerReport();
       this.list = data.evaluationInfo;
-      console.log('data', data.evaluationInfo);
+      this.title = data.evaluationInfo[0].stemName;
+      this.list.forEach((v, i) => {
+        // 增加选中标识符
+        v.stemList.forEach((n, z) => {
+          n.optionList.forEach((m, k) => {
+            this.$set(m, 'isChecked', false);
+          });
+        });
+      });
+      console.log('评估数据', data.evaluationInfo);
     }
   },
   created () {
@@ -68,27 +94,55 @@ export default {
 
 <style lang="scss" scoped>
   @import "styles/mixin.scss";
-
-  .evaluate-info-box {
+  .evalute-info-box {
     @include common;
+    .title {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .wrapper {
+      height: calc(100vh - 155px );
+      background: #fff;
+      overflow: hidden;
+      border-radius: 5px;
+      box-sizing: border-box;
+      padding: 0px 10px;
+    }
+    .box {
 
-    .item-box {
-      h4 {
-        font-size: 16px;
-        font-weight: 400;
-      }
-
-      .box-wrapper {
-        margin-top: 10px;
-        background: #fff;
-        .item-box {
-           h5 {
-             font-weight: 400;
-           }
+      .item-box {
+        display: flex;
+        flex-direction: column;
+        .box-btn {
+          display: flex;
+          flex-wrap: wrap;
+        }
+        .box-title {
+          font-size: 14px;
+          font-weight: bold;
+          margin: 10px 0px;
+        }
+        .radio-btn {
+          border-radius: 5px;
+          border: 1px solid #999;
+          color: #333;
+          background: #F5F5F5;
+          padding: 5px;
+          font-size: 14px;
+          margin-right: 10px;
           margin-bottom: 10px;
         }
+        .active-radio-btn{
+          border-radius: 5px;
+          color: #fff;
+          background: #40B9B0;
+          padding: 5px;
+          font-size: 14px;
+          margin-right: 10px;
+          margin-bottom: 10px;
+          border: 1px solid #40B9B0;
+        }
       }
-
       .van-radio--horizontal {
         margin-bottom: 10px;
       }

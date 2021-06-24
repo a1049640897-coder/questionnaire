@@ -6,9 +6,13 @@
   height: 100vh;
   .wrapper {
     height: calc(100vh - 115px );
+    background: #fff;
     overflow: hidden;
   }
 }
+
+
+
 
 @mixin container {
   @include common;
