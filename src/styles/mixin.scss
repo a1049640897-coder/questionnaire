@@ -1,9 +1,17 @@
-@mixin container {
+@mixin common {
   width: 100%;
-  padding: 15px 14px 0px 15px;
+  padding: 15px 15px 0px 15px;
   box-sizing: border-box;
   background-color: #F7F7F7;
   height: 100vh;
+  .wrapper {
+    height: calc(100vh - 115px );
+    overflow: hidden;
+  }
+}
+
+@mixin container {
+  @include common;
   .base-info {
     height: 100px;
     p {
@@ -52,3 +60,5 @@
     }
   }
 }
+
+

@@ -5,4 +5,5 @@ export default {
       commit(types.TEST, payload);
     }, 1000);
   }
+
 };

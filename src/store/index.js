@@ -8,7 +8,19 @@ Vue.use(Vuex);
 
 const state = {
   baseInfoIsCommited: false,
-  peopleList: []
+  peopleList: [],
+  quesnaireDataList: {
+    communityId: '',
+    buildingName: '',
+    roomNo: '',
+    recordDataList: [
+      {
+        customerRel: '',
+        customerNo: '',
+        recordData: []
+      }
+    ]
+  }
 };
 
 const store = new Vuex.Store({

@@ -11,7 +11,7 @@
           </div>
           <div class="base-right">
             <span>已完成</span>
-            <van-icon name="arrow"/>
+            <van-icon name="arrow" @click="toBaseInfo"/>
           </div>
         </div>
       </van-swipe-cell>
@@ -24,19 +24,19 @@
               @setScroll="setScroll"
               @beforeScroll = "beforeScroll"
               @scroll="scroll"
-              :data="peopleList"
+              :data="$store.state.peopleList"
       >
         <div>
           <p>人员问卷</p>
           <div class="item-box">
-            <van-swipe-cell v-for="(item, index) in peopleList" :key="index">
+            <van-swipe-cell v-for="(item, index) in $store.state.peopleList " :key="index">
               <div class="cell-base">
                 <div class="base-left">
                   {{item.text}}
                   <span style="opacity: 0">*</span>
                 </div>
                 <div class="base-right">
-                  <span>已完成</span>
+                  <span></span>
                   <van-icon @click="toAddDetail" name="arrow"/>
                 </div>
               </div>
@@ -82,6 +82,7 @@ import Footer from 'components/footer/Index';
 import CommonPop from 'components/popup/Index';
 import Scroll from 'components/scroll/Index';
 import '@vant/touch-emulator';
+import { ADDPEOPLELIST, DELETEPEOPLELIST } from 'store/mutations-types.js';
 
 export default {
   name: 'Home',
@@ -111,6 +112,9 @@ export default {
     };
   },
   methods: {
+    toBaseInfo () {
+      this.$router.push({ path: '/add-info', query: { type: 1 } });
+    },
     addPeople () {
       this.isShow = true;
       this.value = '';
@@ -122,7 +126,7 @@ export default {
     },
 
     deletePeople (index) {
-      this.peopleList.splice(index, 1);
+      this.$store.commit(DELETEPEOPLELIST, index);
     },
     toAddDetail () {
       this.$router.push({ path: '/people', query: 1 });
@@ -134,7 +138,7 @@ export default {
       this.showPicker = false;
       setTimeout(() => {
         this.isShow = false;
-        this.peopleList.push(value);
+        this.$store.commit(ADDPEOPLELIST, value);
       }, 500);
     },
     scrollToEnd (scroll) {

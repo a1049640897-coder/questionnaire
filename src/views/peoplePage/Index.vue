@@ -1,37 +1,33 @@
 <template>
   <div class="home-box">
-    <div class="container">
+    <div class="container" >
       <scroll ref="wrapper"
               :listenScroll="true"
               :pullup="false"
-              @scrollToEnd="scrollToEnd"
-              @setScroll="setScroll"
-              @beforeScroll = "beforeScroll"
-              @scroll="scroll"
-              :data="titleList"
+              :data="quesnaireList"
       >
         <div>
-          <p>人员问卷</p>
+          <p>问卷内容</p>
           <div class="item-box">
-            <van-swipe-cell v-for="(item, index) in titleList" :key="item">
+            <van-swipe-cell v-for="(item, index) in quesnaireList" :key="index" :disabled="true" >
               <div class="cell-base">
                 <div class="base-left">
-                  {{item}}
+                  {{item.title}}
                   <span  style="opacity: 0">*</span>
                 </div>
                 <div class="base-right">
-                  <span>已完成</span>
-                  <van-icon @click="toAddDetail" name="arrow"/>
+                  <span v-if="item.isCompeleted">
+                     已完成
+                  </span>
+                  <span v-else>
+                  </span>
+                  <van-icon @click="toAddDetail(item.type)" name="arrow"/>
                 </div>
               </div>
-              <template #right>
-                <van-button square type="danger" @click="deletePeople(index)" text="删除" />
-              </template>
             </van-swipe-cell>
           </div>
         </div>
       </scroll>
-
     </div>
     <Footer></Footer>
   </div>
@@ -42,6 +38,7 @@ import { SwipeCell, Cell, Icon, Field, Form, Button, Picker, Popup } from 'vant'
 
 import Footer from 'components/footer/Index';
 import Scroll from 'components/scroll/Index';
+import { getCustomerReport } from 'apis/people/index.js';
 import '@vant/touch-emulator';
 
 export default {
@@ -65,27 +62,78 @@ export default {
       value: '',
       columns: [{ text: '父亲', id: 1 }, { text: '母亲', id: 2 }],
       showPicker: false,
-      titleList: ['评估资料', '专业医护指导', '照护需求指导', '用药协助'],
       addShow: true,
-      isShow: false
+      isShow: false,
+      copIsShow: false,
+      quesnaireList: []
     };
   },
   methods: {
-    addPeople () {
-      this.isShow = true;
-      this.value = '';
-    },
-    // 子组件关闭
-    closePopup () {
-      this.isShow = false;
-      this.value = '';
-    },
 
+    async getQuesnaire () {
+      try {
+        const { data } = await getCustomerReport();
+        console.info('问卷', data);
+        for (let name in data) {
+          if (name === 'medicineInfo') {
+            const newObj = {
+              title: '康复/用药协助',
+              isCompeleted: false,
+              list: [],
+              type: 2
+            };
+            data[name].forEach((v, i) => {
+              newObj.list.push(v);
+            });
+            this.quesnaireList.push(newObj);
+          } else if (name === 'careInfo') {
+            const newObj = {
+              title: '照护需求指导',
+              isCompeleted: false,
+              list: [],
+              type: 3
+            };
+            data[name].forEach((v, i) => {
+              newObj.list.push(v);
+            });
+            this.quesnaireList.push(newObj);
+          } else if (name === 'evaluationInfo') {
+            const newObj = {
+              title: '评估资料',
+              isCompeleted: false,
+              list: [],
+              type: 4
+            };
+            data[name].forEach((v, i) => {
+              newObj.list.push(v);
+            });
+            this.quesnaireList.push(newObj);
+          } else if (name === 'healthInfo') {
+            const newObj = {
+              title: '专业医护指导',
+              isCompeleted: false,
+              list: [],
+              type: 5
+            };
+            data[name].forEach((v, i) => {
+              newObj.list.push(v);
+            });
+            this.quesnaireList.push(newObj);
+          }
+        }
+        console.log('queList', this.quesnaireList);
+      } catch (e) {
+        console.error(e);
+      }
+    },
     deletePeople (index) {
       this.peopleList.splice(index, 1);
     },
-    toAddDetail () {
-      this.$router.push({ path: '/people', query: 1 });
+    toAddDetail (type) {
+      this.$router.push({ path: '/add-info',
+        query: {
+          type: type
+        } });
     },
     onConfirm (value) {
       console.log(value);
@@ -99,18 +147,19 @@ export default {
     },
     scrollToEnd (scroll) {
       this.scroll = scroll;
-      console.log('下拉到最底下');
     },
     setScroll (scroll) {
       this.scroll = scroll;
-      console.log('scroll创建成功');
     },
     scroll (pos) {
       console.log(pos);// 监听滚动坐标
     },
     beforeScroll () {
-      console.log('滚动之前');
     }
+  },
+  created () {
+    // 获取问卷调查表
+    this.getQuesnaire();
   }
 
 };
