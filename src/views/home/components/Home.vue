@@ -10,7 +10,7 @@
             <span>*</span>
           </div>
           <div class="base-right">
-            <span>已完成</span>
+            <span>{{baseInfoIsCompeleted?'已完成':''}}</span>
             <van-icon name="arrow" @click="toBaseInfo"/>
           </div>
         </div>
@@ -110,6 +110,11 @@ export default {
       addShow: true,
       isShow: false
     };
+  },
+  computed: {
+    baseInfoIsCompeleted () {
+      return this.$store.state.baseInfo.length > 0;
+    }
   },
   methods: {
     toBaseInfo () {

@@ -9,6 +9,10 @@ Vue.use(Vuex);
 const state = {
   baseInfoIsCommited: false,
   peopleList: [],
+  communityId: '', // 社区id
+  buildingName: '', // 楼宇名称
+  roomNo: '', //   门牌号
+  baseInfo: [], // 基本信息
   quesnaireDataList: {
     communityId: '',
     buildingName: '',

@@ -23,5 +23,20 @@ export default {
   // 修改问卷数据
   [types.MODIFYQUESNAIREDATA] (state, payload) {
 
+  },
+
+  [types.UPDATEENTERDATA] (state, payload) {
+    const { communityId, buildingName, roomNo } = payload;
+    state.communityId = communityId;
+    state.buildingName = buildingName;
+    state.roomNo = roomNo;
+  },
+
+  [types.UPDATEBUILDINGNAME] (state, payload) {
+    state.buildingName = payload;
+  },
+
+  [types.UPDATEROOMNO] (state, payload) {
+    state.roomNo = payload;
   }
 };
