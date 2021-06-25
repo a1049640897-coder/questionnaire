@@ -1,10 +1,10 @@
 <template>
     <div class="footer-box">
-      <div class="box-left">
-        <van-button type="warning" round @click="back" >返回</van-button>
+      <div class="box-left" @click="back">
+        返回
       </div>
       <div class="box-right">
-        <van-button type="info" round >提交</van-button>
+        提交
       </div>
     </div>
 </template>
@@ -27,19 +27,27 @@ export default {
 <style lang="scss" scoped>
   .footer-box {
     display: flex;
-    justify-content:center;
-    align-items: center;
     position: fixed;
-    height: 100px;
-    background-color: #fff;
+    height: 50px;
     bottom: 0px;
     width: 100%;
     border-radius: 10px 10px 0px 0px;
-    .van-button--normal {
-      margin: 0px 10px;
+    .box-left,.box-right {
+      width: 50%;
+      height: 100%;
+      line-height: 50px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 400;
     }
-    .van-button--round {
-      width: 100px;
+    .box-right{
+      background-color: #799BDB;
+      border-radius: 0px 10px 0px 0px;
+      color: white;
+    }
+    .box-left {
+      background-color: #cccccc;
+      border-radius: 10px 0px 0px 0px;
     }
   }
 </style>

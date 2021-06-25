@@ -5,8 +5,35 @@
   background-color: #F7F7F7;
   height: 100vh;
   .wrapper {
-    height: calc(100vh - 115px );
+    height: calc(100vh - 75px );
     overflow: hidden;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 5px;
+  }
+}
+
+@mixin btn-styles {
+  .radio-btn {
+    border-radius: 5px;
+    border: 1px solid #cccccc;
+    color: #333;
+    background: #F5F5F5;
+    padding: 5px;
+    font-size: 14px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+
+  .active-radio-btn {
+    border-radius: 5px;
+    color: #fff;
+    background: #40B9B0;
+    padding: 5px;
+    font-size: 14px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #40B9B0;
   }
 }
 

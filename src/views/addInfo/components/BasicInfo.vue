@@ -7,14 +7,16 @@
               :data="list">
         <div>
           <div class="item-box" v-for="(item,index) in list" :key="index" >
-            <h4>{{item.stemName}}</h4>
-            <div class="box-list">
-              <div class="radio-btn">
-                更好的世界观
+            <div class="title">{{item.stemName}}</div>
+            <div class="box-list" v-if="item.isMultiselect">
+              <div :class="nItem.isChecked?activeBtn:radioBtn" @click="checkMultipleData(index,nIndex,nItem)" v-for="(nItem,nIndex) in item.stemList[0].optionList" :key="nIndex">
+                {{nItem.optionName}}
               </div>
-<!--              <van-radio-group v-model="item.radio" @change="checkData" direction="horizontal" :key="index">-->
-<!--                <van-radio :name="nItem.optionId" shape="square" v-for="(nItem,nIndex) in item.stemList[0].optionList" :key="nIndex">{{nItem.optionName}}</van-radio>-->
-<!--              </van-radio-group>-->
+            </div>
+            <div class="box-list" v-else>
+              <div :class="nItem.isChecked?activeBtn:radioBtn" @click="checkData(index,nIndex,nItem)" v-for="(nItem,nIndex) in item.stemList[0].optionList" :key="nIndex">
+                {{nItem.optionName}}
+              </div>
             </div>
           </div>
         </div>
@@ -26,7 +28,7 @@
 </template>
 
 <script>
-import { RadioGroup, Radio, Form, Field } from 'vant';
+import { RadioGroup, Radio, Form, Field, Notify } from 'vant';
 import Scroll from 'components/scroll/Index';
 import Footer from 'components/footer/Index';
 import { getCustomerReport } from 'apis/people/index.js';
@@ -35,7 +37,10 @@ export default {
   data () {
     return {
       radio: '',
-      list: []
+      list: [],
+      activeBtn: 'active-radio-btn',
+      radioBtn: 'radio-btn',
+      mutipleList: []
     };
   },
   components: {
@@ -48,13 +53,80 @@ export default {
     Scroll
   },
   methods: {
-    checkData (e) {
-      console.log('回调参数', e);
+    checkData (index, nIndex, val) {
+      this.list.forEach((v, i) => {
+        if (i === index) {
+          v.stemList[0].optionList.forEach((n, z) => {
+            if (z === nIndex) {
+              this.$set(n, 'isChecked', true);
+            } else {
+              this.$set(n, 'isChecked', false);
+            }
+          });
+        }
+      });
+    },
+    checkMultipleData (index, nIndex, val) {
+      // 判断是否超过三个
+      if (this.mutipleList.length >= 3) {
+        this.list.forEach((v, i) => {
+          if (i === index) {
+            v.stemList[0].optionList.forEach((n, z) => {
+              if (z === nIndex) {
+                // 判断是否点击过
+                if (n.isChecked) {
+                  // 清楚list里对应的值
+                  let newArr = this.mutipleList.filter((p) => p.optionId !== n.optionId);
+                  this.mutipleList = newArr;
+                  console.log(newArr);
+                  this.$set(n, 'isChecked', false);
+                } else {
+                  Notify({ type: 'warning', message: '该选项不能超过3项' });
+                }
+              }
+            });
+          }
+        });
+      } else {
+        this.list.forEach((v, i) => {
+          if (i === index) {
+            v.stemList[0].optionList.forEach((n, z) => {
+              if (z === nIndex) {
+                if (z === nIndex) {
+                  // 判断是否点击过
+                  if (n.isChecked) {
+                    // 清楚list里对应的值
+                    let newArr = this.mutipleList.filter((p) => p.optionId !== n.optionId);
+                    this.mutipleList = newArr;
+                    console.log('newArr', this.mutipleList);
+                    this.$set(n, 'isChecked', false);
+                  } else {
+                    this.$set(n, 'isChecked', true);
+                    const newObj = {};
+                    this.$set(newObj, 'optionId', n.optionId);
+                    this.$set(newObj, 'stemId', n.stemId);
+                    this.mutipleList.push(newObj);
+                  }
+                }
+              }
+            });
+          }
+        });
+      }
+      console.log('mutipleList', this.mutipleList);
     },
     async getData () {
       const { data } = await getCustomerReport();
       this.list = data.basicInfo;
-      console.log('data', data);
+      this.list.forEach((v, i) => {
+        // 增加选中标识符
+        v.stemList.forEach((n, z) => {
+          n.optionList.forEach((m, k) => {
+            this.$set(m, 'isChecked', false);
+          });
+        });
+      });
+      console.log('基础数据', this.list);
     }
   },
   created () {
@@ -67,20 +139,20 @@ export default {
   @import "styles/mixin.scss";
   .base-info-box {
     @include common;
+    .wrapper {
+      background-color: #ffffff;
+    }
     .item-box {
-      h4 {
+      margin-bottom: 10px;
+      .title {
         font-size: 14px;
+        font-weight: bold;
       }
       .box-list {
         margin-top: 10px;
         display: flex;
-        .radio-btn {
-          border: 1px solid #999;
-          color: #333;
-          background: #F5F5F5;
-          padding: 5px;
-          font-size: 14px;
-        }
+        flex-wrap: wrap;
+        @include btn-styles;
       }
       .van-radio--horizontal {
         margin-bottom: 10px;

@@ -64,7 +64,8 @@ export default {
         scrollY: true,
         scrollX: false,
         startY: this.startY,
-        pullUpLoad: this.pullup
+        pullUpLoad: this.pullup,
+        bounce: true
       });
       this.$emit('setScroll', this.scroll);
       if (this.listenScroll) {
@@ -104,6 +105,7 @@ export default {
     data () {
       setTimeout(() => {
         this.refresh();
+        console.info('refresh');
       }, this.refreshDelay);
     }
   }
