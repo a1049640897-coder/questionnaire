@@ -4,8 +4,7 @@
       <scroll ref="wrapper"
               :listenScroll="true"
               :pullup="false"
-              :data="medicalListData"
-              @scroll="scrollD"
+              :data="list"
       >
         <div>
           <div class="item-box" v-for="(item,index) in list" :key="item.stemId">
@@ -27,34 +26,32 @@
     <van-popup v-model="showPicker" position="center">
       <van-form @submit="onSubmit">
         <van-field
-          :value="communityValue"
+          :value="count"
           name="name"
-          label="社区"
-          placeholder="选择社区"
+          label="单位"
+          placeholder="请选择"
           readonly
           clickable
-          @click="communityPicker = true"
+          @click="showCount= true"
         />
         <van-field
-          readonly
-          clickable
-          label="楼宇"
-          name="address"
-          :value="value"
-          placeholder="选择楼宇"
-          @click="selectBuildings"
-        />
-        <van-field
-          v-model="addressName"
           name="addressName"
-          label="门牌号码"
-          placeholder="请填写门牌号码"
+          label="次数"
+          placeholder="请填写次数"
         />
         <div style="margin: 16px;">
-          <van-button round block type="info" native-type="submit">提交</van-button>
-          <van-button round block type="warning" native-type="submit">取消</van-button>
+          <van-button round block type="info" native-type="submit">确定</van-button>
+          <van-button round block type="warning" @click="cancelPicker" native-type="submit">取消</van-button>
         </div>
       </van-form>
+    </van-popup>
+    <van-popup v-model="showCount" position="bottom">
+      <van-picker
+        show-toolbar
+        :columns="columns"
+        @confirm="onConfirm"
+        @cancel="showCount = false"
+      />
     </van-popup>
   </div>
 
@@ -72,12 +69,10 @@ export default {
     return {
       radio: '',
       list: [],
-      columns: ['每周六此', '每周一次'],
+      columns: [{ text: '每日', val: 'did' }, { text: '每周', val: 'wid' }, { text: '每月', val: 'mid' }],
       showPicker: false,
-      medicalListData: [
-        { title: '阿昔莫司', count: '每周六次', remark: '请备注' },
-        { title: '阿昔莫司', count: '每周六次', remark: '请备注' }
-      ],
+      count: '',
+      showCount: false,
       activeBtn: 'active-radio-btn',
       radioBtn: 'radio-btn'
     };
@@ -96,18 +91,13 @@ export default {
     Scroll
   },
   methods: {
-    scrollD (val) {
-      console.info('店亭', val);
+    cancelPicker () {
+      this.showPicker = false;
     },
     onConfirm (value) {
-      const newObj = {
-        title: 'dsad',
-        count: value,
-        remark: 'aa'
-      };
-      console.log('new', newObj);
-      this.medicalListData.push(newObj);
-      this.showPicker = false;
+      const { text } = value;
+      this.count = text;
+      this.showCount = false;
     },
     delMedicalDate (index) {
       this.medicalListData.splice(index, 1);
@@ -124,8 +114,6 @@ export default {
               n.optionList.forEach((k, m) => {
                 if (m === zIndex) {
                   this.$set(k, 'isChecked', true);
-                } else {
-                  this.$set(k, 'isChecked', false);
                 }
               });
             }

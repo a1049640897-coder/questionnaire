@@ -82,10 +82,7 @@ export default {
       list: [],
       columns: ['每周六此', '每周一次'],
       showPicker: false,
-      medicalListData: [
-        { title: '阿昔莫司', count: '每周六次', remark: '请备注' },
-        { title: '阿昔莫司', count: '每周六次', remark: '请备注' }
-      ],
+      medicalListData: [],
       activeBtn: 'active-radio-btn',
       radioBtn: 'radio-btn'
     };
