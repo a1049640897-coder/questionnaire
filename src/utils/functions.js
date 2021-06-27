@@ -66,7 +66,10 @@ export const generateUUID = () => {
   });
   return uuid;
 };
-
+// 生成唯一编码
+export const createRandomId = () => {
+  return (Math.random() * 10000000).toString(16).substr(0, 4) + '_' + (new Date()).getTime() + '_' + Math.random().toString().substr(2, 5);
+};
 /**
  * 判断是什么环境，测试环境还是正式环境
  * @returns 环境变量 dev测试环境 / prod 正式环境

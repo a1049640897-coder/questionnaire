@@ -71,7 +71,6 @@ export default {
   name: 'HomePop',
   data () {
     return {
-      isShow: true,
       showPicker: false,
       communityPicker: false,
       buildingName: '',
@@ -91,6 +90,12 @@ export default {
     [Button.name]: Button,
     [Picker.name]: Picker,
     [Popup.name]: Popup
+  },
+  computed: {
+    isShow () {
+      return this.$store.state.communityId === '';
+      // return false;
+    }
   },
   methods: {
     async getListCommunity () {
@@ -112,7 +117,6 @@ export default {
           communityId
         };
         const { data } = await listBuildings(param);
-        console.info('返回的楼宇', data);
         this.buildings = data.buildings;
         this.showPicker = true;
       } catch (e) {
@@ -120,22 +124,21 @@ export default {
       }
     },
 
-    async validateUser (param) {
+    async validateUser () {
       try {
-        param.buildingNo = 1;
-        // delete param.buildingName;
-        // const { data } = await getUserInfo(param);
-        // console.info('结果', data);
-        // const { isExist, isWrite } = data;
-        const [isExist, isWrite] = [0, 0];
+        const param = {
+          roomNo: this.roomNo,
+          communityId: this.communityObj.communityId,
+          buildingNo: this.buildingName
+        };
+        const { data } = await getUserInfo(param);
+        const { isExist, isWrite } = data;
         if (isExist) {
           Notify({ type: 'warning', message: '用户已经存在' });
         } else if (isWrite) {
           Notify({ type: 'warning', message: '用户已经填写了问卷' });
         } else {
-          console.log('成功提交');
           this.$store.commit(types.UPDATEENTERDATA, param);
-          this.isShow = false;
         }
       } catch (e) {
         console.error(e);
@@ -151,8 +154,8 @@ export default {
     },
 
     onConfirm (value) {
-      console.log('楼宇', value);
       this.buildingName = value;
+      console.info(value);
       this.showPicker = false;
     },
     onConfirmComunity (value) {

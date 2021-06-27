@@ -1,42 +1,143 @@
 import * as types from './mutations-types';
+import { Notify } from 'vant';
 
 export default {
   [types.TEST] (state, payload) {
     state.baseInfoIsCommited = payload;
   },
 
-  // 增加老人
+  // 增加关系
   [types.ADDPEOPLELIST] (state, payload) {
     state.peopleList.push(payload);
   },
 
-  // 删除用户
+  // 删除关系
   [types.DELETEPEOPLELIST] (state, payload) {
-    state.peopleList.splice(payload, 1);
-  },
-
-  // 增加问卷数据
-  [types.ADDQUESNAIREDATE] (state, payload) {
-
-  },
-
-  // 修改问卷数据
-  [types.MODIFYQUESNAIREDATA] (state, payload) {
-
+    const newPeopleList = state.peopleList.filter((item) => {
+      return item.customerNo !== payload;
+    });
+    state.peopleList = JSON.parse(JSON.stringify(newPeopleList));
   },
 
   [types.UPDATEENTERDATA] (state, payload) {
-    const { communityId, buildingName, roomNo } = payload;
+    const { communityId, buildingNo, roomNo } = payload;
     state.communityId = communityId;
-    state.buildingName = buildingName;
+    state.buildingName = buildingNo;
     state.roomNo = roomNo;
   },
 
-  [types.UPDATEBUILDINGNAME] (state, payload) {
-    state.buildingName = payload;
+  [types.UDATEBASEINFO] (state, payload) {
+    state.baseInfo = JSON.parse(JSON.stringify(payload));
   },
 
-  [types.UPDATEROOMNO] (state, payload) {
-    state.roomNo = payload;
+  [types.UDATEBASEINFOMUTY] (state, payload) {
+    state.baseInfoMutifly = JSON.parse(JSON.stringify(payload));
+  },
+
+  [types.UPDATERANDOMNO] (state, payload) {
+    state.randomNo += state.randomNo;
+  },
+
+  [types.ADDEVALUATIONINFO] (state, payload) {
+    state.peopleList.forEach((v, i) => {
+      if (payload.customerNo === v.customerNo) {
+        v.recordData.evaluationInfo.length = 0;
+        for (let item of payload.list) {
+          v.recordData.evaluationInfo.push(item);
+        };
+      }
+    });
+  },
+
+  [types.UPDATEEALTHINFO] (state, payload) {
+    state.peopleList.forEach((v, i) => {
+      if (payload.customerNo === v.customerNo) {
+        v.recordData.healthInfo.length = 0;
+        for (let item of payload.list) {
+          v.recordData.healthInfo.push(item);
+        };
+      }
+    });
+  },
+
+  [types.UPDATEMEDICAL] (state, payload) {
+    state.peopleList.forEach((v, i) => {
+      if (payload.customerNo === v.customerNo) {
+        v.recordData.medicineInfo.length = 0;
+        for (let item of payload.list) {
+          v.recordData.medicineInfo.push(item);
+        };
+      }
+    });
+  },
+
+  [types.UPDATECAREINFO] (state, payload) {
+    state.peopleList.forEach((v, i) => {
+      if (payload.customerNo === v.customerNo) {
+        v.recordData.careInfo.length = 0;
+        for (let item of payload.list) {
+          v.recordData.careInfo.push(item);
+        };
+      }
+    });
+  },
+
+  [types.SUBMITQUESNAIRE] (state, payload) {
+    state.quesnaireIsSuceessSubmit = payload;
+  },
+
+  [types.RESORECORDDATA] (state, payload) {
+    // 判断评估资料已经填写完成
+    // for (let i = 0; i < state.peopleList; i++) {
+    //   console.info('哈哈', state.peopleList[i]);
+    //   if (state.peopleList[i].recordData.evaluationInfo.length < 1) {
+    //     Notify({ type: 'warning', message: `第${i}条数据评估资料还没填写` });
+    //   }
+    // }
+    // eslint-disable-next-line no-unused-vars
+    let flag = true;
+
+    state.peopleList.forEach((v, i) => {
+      if (v.recordData.evaluationInfo.length < 1) {
+        Notify({ type: 'warning', message: `第${i + 1}条数据评估资料还没填写` });
+        flag = false;
+        throw new Error();
+      } else {
+        flag = true;
+      }
+    });
+
+    if (flag) {
+      state.recordDataList.length = 0;
+      state.peopleList.forEach((v, i) => {
+        const newObj = {
+          customerRel: v.customerRel,
+          customerNo: v.customerNo,
+          recordData: []
+        };
+        v.recordData.medicineInfo.forEach((n, z) => {
+          newObj.recordData.push(n);
+        });
+        v.recordData.evaluationInfo.forEach((n, z) => {
+          newObj.recordData.push(n);
+        });
+        v.recordData.healthInfo.forEach((n, z) => {
+          newObj.recordData.push(n);
+        });
+        v.recordData.careInfo.forEach((n, z) => {
+          newObj.recordData.push(n);
+        });
+        state.recordDataList.push(newObj);
+      });
+      const newObj = {
+        customerRel: 1,
+        customerNo: 1,
+        recordData: []
+      };
+      state.baseInfo.forEach((v, i) => {
+        newObj.recordData.push(v);
+      });
+      state.recordDataList.push(newObj);
+    }
   }
 };

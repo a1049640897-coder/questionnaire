@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div >
     <div class="base-info-box">
       <scroll ref="wrapper"
               :listenScroll="true"
@@ -22,7 +22,7 @@
         </div>
       </scroll>
     </div>
-    <Footer></Footer>
+    <Footer @submitData="submitData"></Footer>
   </div>
 
 </template>
@@ -32,6 +32,7 @@ import { RadioGroup, Radio, Form, Field, Notify } from 'vant';
 import Scroll from 'components/scroll/Index';
 import Footer from 'components/footer/Index';
 import { getCustomerReport } from 'apis/people/index.js';
+import * as types from 'store/mutations-types.js';
 export default {
   name: 'BasicInfo',
   data () {
@@ -40,7 +41,9 @@ export default {
       list: [],
       activeBtn: 'active-radio-btn',
       radioBtn: 'radio-btn',
-      mutipleList: []
+      mutipleList: [],
+      submitList: [],
+      isSubmit: false
     };
   },
   components: {
@@ -51,14 +54,87 @@ export default {
 
     Footer,
     Scroll
+
+  },
+  computed: {
   },
   methods: {
+
+    saveData () {
+      for (let item of this.$store.state.baseInfo) {
+        this.submitList.push(item);
+      }
+      for (let item of this.$store.state.baseInfoMutifly) {
+        this.mutipleList.push(item);
+      }
+    },
+    compareData () {
+      // 对比没有多选的基础数据
+      this.$store.state.baseInfo.forEach((v, i) => {
+        this.list.forEach((n, z) => {
+          if (v.stemId === n.stemId) {
+            n.stemList.forEach((m, k) => {
+              m.optionList.forEach((k, q) => {
+                if (k.optionId === v.optionId) {
+                  this.$set(k, 'isChecked', true);
+                }
+              });
+            });
+          }
+        });
+      });
+      // 对比多选的基础数据
+      this.$store.state.baseInfoMutifly.forEach((v, i) => {
+        this.list.forEach((n, z) => {
+          if (n.isMultiselect) {
+            n.stemList.forEach((m, k) => {
+              m.optionList.forEach((k, q) => {
+                if (k.optionId === v.optionId) {
+                  this.$set(k, 'isChecked', true);
+                }
+              });
+            });
+          }
+        });
+      });
+      this.$loading.hide();
+    },
+    submitData () {
+      // 判断是否全部回答完整
+      let newSbArr = JSON.parse(JSON.stringify(this.submitList));
+      let newMuArr = JSON.parse(JSON.stringify(this.mutipleList));
+      for (let k of newMuArr) {
+        newSbArr.push(k);
+      }
+      for (let n of this.list) {
+        const flag = newSbArr.find(item => { return n.stemId === item.stemId; });
+        if (flag) {
+          this.isSubmit = true;
+        } else {
+          this.isSubmit = false;
+          break;
+        }
+      }
+
+      if (this.isSubmit) {
+        this.$store.commit(types.UDATEBASEINFO, this.submitList);
+        this.$store.commit(types.UDATEBASEINFOMUTY, this.mutipleList);
+        history.back();
+      } else {
+        Notify({ type: 'warning', message: '问题未回答完整' });
+      }
+    },
     checkData (index, nIndex, val) {
       this.list.forEach((v, i) => {
         if (i === index) {
           v.stemList[0].optionList.forEach((n, z) => {
             if (z === nIndex) {
               this.$set(n, 'isChecked', true);
+              const newList = this.submitList.filter((item) => { return item.uid !== i; });
+              this.submitList = newList;
+              const { stemId, optionId } = n;
+              const newObj = { stemId, optionId, uid: i };
+              this.submitList.push(newObj);
             } else {
               this.$set(n, 'isChecked', false);
             }
@@ -116,17 +192,26 @@ export default {
       console.log('mutipleList', this.mutipleList);
     },
     async getData () {
-      const { data } = await getCustomerReport();
-      this.list = data.basicInfo;
-      this.list.forEach((v, i) => {
-        // 增加选中标识符
-        v.stemList.forEach((n, z) => {
-          n.optionList.forEach((m, k) => {
-            this.$set(m, 'isChecked', false);
+      this.$loading.show();
+      try {
+        const { data } = await getCustomerReport();
+        this.list = data.basicInfo;
+        this.list.forEach((v, i) => {
+          // 增加选中标识符
+          v.stemList.forEach((n, z) => {
+            n.optionList.forEach((m, k) => {
+              this.$set(m, 'isChecked', false);
+            });
           });
         });
-      });
-      console.log('基础数据', this.list);
+        this.saveData();
+        this.compareData();
+      } catch (e) {
+        console.error(e);
+        this.$loading.hide();
+      } finally {
+        this.$loading.hide();
+      }
     }
   },
   created () {

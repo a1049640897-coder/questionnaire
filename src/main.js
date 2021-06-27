@@ -4,10 +4,14 @@ import router from './router';
 import store from './store';
 import 'lib-flexible';
 import VueWechatTitle from 'vue-wechat-title';
+import Loading from 'components/loading/index';
 
 /* 适配微信页面无法修改title */
 Vue.use(VueWechatTitle);
 Vue.config.productionTip = false;
+
+// 全局注册loading组件
+Vue.use(Loading);
 
 new Vue({
   router,

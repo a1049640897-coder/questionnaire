@@ -10,18 +10,16 @@
           <div class="item-box" v-for="(item,index) in list" :key="index" >
             <div class="title">{{item.stemName}}</div>
             <div class="box-list">
-              <div :class="nItem.isChecked?activeBtn:radioBtn" v-if="nItem.optionType===1" @click="checkData(index,nIndex,nItem)" v-for="(nItem,nIndex) in item.stemList[0].optionList" :key="nIndex">
-                {{nItem.optionName}}
-              </div>
-              <div v-else :key="nIndex">
-                <input type="text" placeholder="请输入其他症状" class="input-box">
+              <div v-for="(nItem,nIndex) in item.stemList[0].optionList" :key="nIndex">
+                  <div :class="nItem.isChecked?activeBtn:radioBtn" v-if="nItem.optionType===1" @click="checkData(index,nIndex,nItem)" :key="nIndex">    {{nItem.optionName}}</div>
+                  <div v-else > <input type="text" placeholder="请输入其他症状"  v-model="nItem.remark" @blur="getInputData(nItem,nIndex)" class="input-box" :key="nIndex"></div>
               </div>
             </div>
           </div>
         </div>
       </scroll>
     </div>
-    <Footer></Footer>
+    <Footer @submitData="submitData"></Footer>
   </div>
 
 </template>
@@ -31,6 +29,8 @@ import { RadioGroup, Radio, Form, Field, Notify } from 'vant';
 import Scroll from 'components/scroll/Index';
 import Footer from 'components/footer/Index';
 import { getCustomerReport } from 'apis/people/index.js';
+import { UPDATEEALTHINFO } from 'store/mutations-types.js';
+
 export default {
   name: 'BasicInfo',
   data () {
@@ -39,7 +39,7 @@ export default {
       list: [],
       activeBtn: 'active-radio-btn',
       radioBtn: 'radio-btn',
-      mutipleList: []
+      submitList: []
     };
   },
   components: {
@@ -52,7 +52,81 @@ export default {
     Scroll
   },
   methods: {
+
+    submitData () {
+      const newObj = {
+        list: this.submitList,
+        customerNo: Number(this.$route.query.customerNo)
+      };
+      this.$store.commit(UPDATEEALTHINFO, newObj);
+      history.back();
+    },
+    saveData () {
+      const newObj = this.$store.state.peopleList.find(item => item.customerNo == this.$route.query.customerNo);
+      if (newObj) {
+        const arr = newObj.recordData.healthInfo;
+        for (let item of arr) {
+          this.submitList.push(item);
+        }
+      }
+    },
+    compareData () {
+      // 对比评估资料
+      const newObj = this.$store.state.peopleList.find(item => item.customerNo == this.$route.query.customerNo);
+      if (newObj) {
+        const arr = newObj.recordData.healthInfo;
+        arr.forEach((v, i) => {
+          this.list.forEach((n, z) => {
+            if (n.stemId == v.stemId) {
+              n.stemList.forEach((m, k) => {
+                m.optionList.forEach((k, q) => {
+                  if (k.optionId == v.optionId) {
+                    if (v.remark) {
+                      this.$set(k, 'remark', v.remark);
+                    } else {
+                      this.$set(k, 'isChecked', true);
+                    }
+                  }
+                });
+              });
+            }
+          });
+        });
+      }
+      this.$loading.hide();
+    },
+    getInputData (val, nIndex) {
+      for (let i = 0, len = this.submitList.length; i < len; i++) {
+        if (this.submitList[i].optionType == 2 && this.submitList[i].stemId == val.stemId) {
+          this.submitList.splice(i, 1);
+          len--;
+        }
+      }
+      const { optionId, stemId, remark, optionType } = val;
+      const newObj = {
+        optionId,
+        stemId,
+        remark,
+        optionType
+      };
+      this.submitList.push(newObj);
+    },
     checkData (index, nIndex, val) {
+      // 清空相同的list
+      for (var i = 0, len = this.submitList.length; i < len; i++) {
+        if (this.submitList[i].stemId == val.stemId && this.submitList[i].optionType == 1) {
+          this.submitList.splice(i, 1);
+          len--;
+        }
+      }
+      const { optionId, stemId, optionType } = val;
+      const newObj = {
+        optionId,
+        stemId,
+        optionType
+      };
+      this.submitList.push(newObj);
+
       this.list.forEach((v, i) => {
         if (i === index) {
           v.stemList[0].optionList.forEach((n, z) => {
@@ -65,67 +139,26 @@ export default {
         }
       });
     },
-    checkMultipleData (index, nIndex, val) {
-      // 判断是否超过三个
-      if (this.mutipleList.length >= 3) {
-        this.list.forEach((v, i) => {
-          if (i === index) {
-            v.stemList[0].optionList.forEach((n, z) => {
-              if (z === nIndex) {
-                // 判断是否点击过
-                if (n.isChecked) {
-                  // 清楚list里对应的值
-                  let newArr = this.mutipleList.filter((p) => p.optionId !== n.optionId);
-                  this.mutipleList = newArr;
-                  console.log(newArr);
-                  this.$set(n, 'isChecked', false);
-                } else {
-                  Notify({ type: 'warning', message: '该选项不能超过3项' });
-                }
-              }
-            });
-          }
-        });
-      } else {
-        this.list.forEach((v, i) => {
-          if (i === index) {
-            v.stemList[0].optionList.forEach((n, z) => {
-              if (z === nIndex) {
-                if (z === nIndex) {
-                  // 判断是否点击过
-                  if (n.isChecked) {
-                    // 清楚list里对应的值
-                    let newArr = this.mutipleList.filter((p) => p.optionId !== n.optionId);
-                    this.mutipleList = newArr;
-                    console.log('newArr', this.mutipleList);
-                    this.$set(n, 'isChecked', false);
-                  } else {
-                    this.$set(n, 'isChecked', true);
-                    const newObj = {};
-                    this.$set(newObj, 'optionId', n.optionId);
-                    this.$set(newObj, 'stemId', n.stemId);
-                    this.mutipleList.push(newObj);
-                  }
-                }
-              }
-            });
-          }
-        });
-      }
-      console.log('mutipleList', this.mutipleList);
-    },
     async getData () {
-      const { data } = await getCustomerReport();
-      this.list = data.healthInfo;
-      this.list.forEach((v, i) => {
-        // 增加选中标识符
-        v.stemList.forEach((n, z) => {
-          n.optionList.forEach((m, k) => {
-            this.$set(m, 'isChecked', false);
+      this.$loading.show();
+      try {
+        const { data } = await getCustomerReport();
+        this.list = data.healthInfo;
+        this.list.forEach((v, i) => {
+          // 增加选中标识符
+          v.stemList.forEach((n, z) => {
+            n.optionList.forEach((m, k) => {
+              this.$set(m, 'isChecked', false);
+            });
           });
         });
-      });
-      console.log('专业医护数据', data.healthInfo);
+        this.saveData();
+        this.compareData();
+      } catch (e) {
+        console.error(e);
+      } finally {
+        this.$loading.hide();
+      }
     }
   },
   created () {

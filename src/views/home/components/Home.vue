@@ -20,10 +20,6 @@
       <scroll ref="wrapper"
               :listenScroll="true"
               :pullup="false"
-              @scrollToEnd="scrollToEnd"
-              @setScroll="setScroll"
-              @beforeScroll = "beforeScroll"
-              @scroll="scroll"
               :data="$store.state.peopleList"
       >
         <div>
@@ -37,11 +33,11 @@
                 </div>
                 <div class="base-right">
                   <span></span>
-                  <van-icon @click="toAddDetail" name="arrow"/>
+                  <van-icon @click="toAddDetail(item.customerNo)" name="arrow"/>
                 </div>
               </div>
               <template #right>
-                <van-button square type="danger" @click="deletePeople(index)" text="删除" />
+                <van-button square type="danger" @click="deletePeople(item.customerNo)" text="删除" />
               </template>
             </van-swipe-cell>
           </div>
@@ -71,18 +67,18 @@
         @cancel="showPicker = false"
       />
     </van-popup>
-    <Footer></Footer>
+    <Footer @submitData="submitData" :is-only="true"></Footer>
   </div>
 </template>
 
 <script>
-import { SwipeCell, Cell, Icon, Field, Form, Button, Picker, Popup } from 'vant';
+import { SwipeCell, Cell, Icon, Field, Form, Button, Picker, Popup, Notify } from 'vant';
 
 import Footer from 'components/footer/Index';
 import CommonPop from 'components/popup/Index';
 import Scroll from 'components/scroll/Index';
 import '@vant/touch-emulator';
-import { ADDPEOPLELIST, DELETEPEOPLELIST } from 'store/mutations-types.js';
+import { ADDPEOPLELIST, DELETEPEOPLELIST, UPDATERANDOMNO, SUBMITQUESNAIRE } from 'store/mutations-types.js';
 
 export default {
   name: 'Home',
@@ -104,7 +100,9 @@ export default {
   data () {
     return {
       value: '',
-      columns: [{ text: '父亲', id: 1 }, { text: '母亲', id: 2 }],
+      columns: [
+        { text: '本人', id: 1 }, { text: '父亲', id: 2 }, { text: '母亲', id: 3 },
+        { text: '儿子', id: 4 }, { text: '女儿', id: 5 }, { text: '其他', id: 6 }],
       showPicker: false,
       peopleList: [],
       addShow: true,
@@ -117,6 +115,17 @@ export default {
     }
   },
   methods: {
+
+    rlationShipIsExit (customerRel) {
+      return this.$store.state.peopleList.find(item => item.customerRel === customerRel);
+    },
+    submitData () {
+      if (this.baseInfoIsCompeleted) {
+        this.$store.dispatch(SUBMITQUESNAIRE);
+      } else {
+        Notify({ type: 'warning', message: '请填写基础信息' });
+      }
+    },
     toBaseInfo () {
       this.$router.push({ path: '/add-info', query: { type: 1 } });
     },
@@ -130,35 +139,53 @@ export default {
       this.value = '';
     },
 
-    deletePeople (index) {
-      this.$store.commit(DELETEPEOPLELIST, index);
+    deletePeople (customerNo) {
+      this.$store.commit(DELETEPEOPLELIST, customerNo);
     },
-    toAddDetail () {
-      this.$router.push({ path: '/people', query: 1 });
+    toAddDetail (customerNo) {
+      this.$router.push({ path: '/people', query: { customerNo: customerNo } });
     },
     onConfirm (value) {
-      console.log(value);
-      const { text } = value;
+      const { id, text } = value;
       this.value = text;
       this.showPicker = false;
+      this.$store.commit(UPDATERANDOMNO);
+
+      // 关系唯一添加
       setTimeout(() => {
         this.isShow = false;
-        this.$store.commit(ADDPEOPLELIST, value);
+        if (id !== 1 && id !== 2 && id !== 3) {
+          const newObj = {
+            customerRel: id,
+            customerNo: this.$store.state.randomNo,
+            recordData: {
+              evaluationInfo: [],
+              healthInfo: [],
+              careInfo: [],
+              medicineInfo: []
+            },
+            text: text
+          };
+          this.$store.commit(ADDPEOPLELIST, newObj);
+        } else {
+          if (this.rlationShipIsExit(id)) {
+            Notify({ type: 'warning', message: `${text}不能重复添加` });
+          } else {
+            const newObj = {
+              customerRel: id,
+              customerNo: id,
+              recordData: {
+                evaluationInfo: [],
+                healthInfo: [],
+                careInfo: [],
+                medicineInfo: []
+              },
+              text: text
+            };
+            this.$store.commit(ADDPEOPLELIST, newObj);
+          }
+        }
       }, 500);
-    },
-    scrollToEnd (scroll) {
-      this.scroll = scroll;
-      console.log('下拉到最底下');
-    },
-    setScroll (scroll) {
-      this.scroll = scroll;
-      console.log('scroll创建成功');
-    },
-    scroll (pos) {
-      console.log(pos);// 监听滚动坐标
-    },
-    beforeScroll () {
-      console.log('滚动之前');
     }
   }
 

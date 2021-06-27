@@ -1,6 +1,6 @@
 <template>
   <div class="home-box">
-    <div class="container" >
+    <div class="container">
       <scroll ref="wrapper"
               :listenScroll="true"
               :pullup="false"
@@ -9,11 +9,12 @@
         <div>
           <p>问卷内容</p>
           <div class="item-box">
-            <van-swipe-cell v-for="(item, index) in quesnaireList" :key="index" :disabled="true" >
+            <van-swipe-cell v-for="(item, index) in quesnaireList" :key="index" :disabled="true">
               <div class="cell-base">
                 <div class="base-left">
                   {{item.title}}
-                  <span  style="opacity: 0">*</span>
+                  <span style="" v-if="item.required">*</span>
+                  <span style="opacity: 0" v-else>*</span>
                 </div>
                 <div class="base-right">
                   <span v-if="item.isCompeleted">
@@ -29,12 +30,12 @@
         </div>
       </scroll>
     </div>
-    <Footer></Footer>
+    <Footer @submitData="submitData"></Footer>
   </div>
 </template>
 
 <script>
-import { SwipeCell, Cell, Icon, Field, Form, Button, Picker, Popup } from 'vant';
+import { SwipeCell, Cell, Icon, Field, Form, Button, Picker, Popup, Notify } from 'vant';
 
 import Footer from 'components/footer/Index';
 import Scroll from 'components/scroll/Index';
@@ -68,19 +69,64 @@ export default {
       quesnaireList: []
     };
   },
+  computed: {
+    baseInfoIsCompeleted () {
+      return this.$store.state.baseInfo.length > 0;
+    },
+    medicineShow () {
+      const flag = this.$store.state.peopleList.filter(item => {
+        return item.customerNo == this.$route.query.customerNo;
+      });
+      return flag[0].recordData.medicineInfo.length;
+    },
+    careShow () {
+      const flag = this.$store.state.peopleList.filter(item => {
+        return item.customerNo == this.$route.query.customerNo;
+      });
+      return flag[0].recordData.careInfo.length;
+    },
+    ealthShow () {
+      const flag = this.$store.state.peopleList.filter(item => {
+        return item.customerNo == this.$route.query.customerNo;
+      });
+      return flag[0].recordData.healthInfo.length;
+    },
+    evaluationShow () {
+      const flag = this.$store.state.peopleList.filter(item => {
+        return item.customerNo == this.$route.query.customerNo;
+      });
+      return flag[0].recordData.evaluationInfo.length;
+    }
+
+  },
   methods: {
 
+    back () {
+      if (this.evaluationShow) {
+        history.back();
+      } else {
+        Notify({ type: 'warning', message: '请先填写完评估资料' });
+      }
+    },
+    submitData () {
+      if (this.evaluationShow) {
+        history.back();
+      } else {
+        Notify({ type: 'warning', message: '评估资料还未填写' });
+      }
+    },
+
     async getQuesnaire () {
+      this.$loading.show();
       try {
         const { data } = await getCustomerReport();
-        console.info('问卷', data);
         for (let name in data) {
           if (name === 'medicineInfo') {
             const newObj = {
               title: '康复/用药协助',
-              isCompeleted: false,
-              list: [],
-              type: 2
+              isCompeleted: this.medicineShow,
+              type: 2,
+              list: []
             };
             data[name].forEach((v, i) => {
               newObj.list.push(v);
@@ -89,9 +135,9 @@ export default {
           } else if (name === 'careInfo') {
             const newObj = {
               title: '照护需求指导',
-              isCompeleted: false,
-              list: [],
-              type: 3
+              isCompeleted: this.careShow,
+              type: 3,
+              list: []
             };
             data[name].forEach((v, i) => {
               newObj.list.push(v);
@@ -100,9 +146,10 @@ export default {
           } else if (name === 'evaluationInfo') {
             const newObj = {
               title: '评估资料',
-              isCompeleted: false,
+              isCompeleted: this.evaluationShow,
+              type: 4,
               list: [],
-              type: 4
+              required: true
             };
             data[name].forEach((v, i) => {
               newObj.list.push(v);
@@ -111,9 +158,9 @@ export default {
           } else if (name === 'healthInfo') {
             const newObj = {
               title: '专业医护指导',
-              isCompeleted: false,
-              list: [],
-              type: 5
+              isCompeleted: this.ealthShow,
+              type: 5,
+              list: []
             };
             data[name].forEach((v, i) => {
               newObj.list.push(v);
@@ -124,16 +171,22 @@ export default {
         console.log('queList', this.quesnaireList);
       } catch (e) {
         console.error(e);
+        this.$loading.hide();
+      } finally {
+        this.$loading.hide();
       }
     },
     deletePeople (index) {
       this.peopleList.splice(index, 1);
     },
     toAddDetail (type) {
-      this.$router.push({ path: '/add-info',
+      this.$router.push({
+        path: '/add-info',
         query: {
-          type: type
-        } });
+          type: type,
+          customerNo: this.$route.query.customerNo
+        }
+      });
     },
     onConfirm (value) {
       console.log(value);
@@ -144,17 +197,6 @@ export default {
         this.isShow = false;
         this.peopleList.push(value);
       }, 500);
-    },
-    scrollToEnd (scroll) {
-      this.scroll = scroll;
-    },
-    setScroll (scroll) {
-      this.scroll = scroll;
-    },
-    scroll (pos) {
-      console.log(pos);// 监听滚动坐标
-    },
-    beforeScroll () {
     }
   },
   created () {
@@ -167,8 +209,9 @@ export default {
 
 <style lang="scss" scoped>
   @import "styles/mixin.scss";
+
   .home-box {
-    .container{
+    .container {
       @include container;
     }
   }
