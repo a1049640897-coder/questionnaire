@@ -28,7 +28,6 @@ export default {
   },
   methods: {
     closePopup () {
-      console.info('子组件点击了');
       this.$emit('closePopup');
     }
   }

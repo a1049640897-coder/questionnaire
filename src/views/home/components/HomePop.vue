@@ -133,8 +133,8 @@ export default {
         };
         const { data } = await getUserInfo(param);
         const { isExist, isWrite } = data;
-        if (isExist) {
-          Notify({ type: 'warning', message: '用户已经存在' });
+        if (!isExist) {
+          Notify({ type: 'warning', message: '用户不存在' });
         } else if (isWrite) {
           Notify({ type: 'warning', message: '用户已经填写了问卷' });
         } else {

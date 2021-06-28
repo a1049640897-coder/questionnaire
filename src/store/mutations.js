@@ -96,16 +96,19 @@ export default {
     // }
     // eslint-disable-next-line no-unused-vars
     let flag = true;
-
-    state.peopleList.forEach((v, i) => {
-      if (v.recordData.evaluationInfo.length < 1) {
-        Notify({ type: 'warning', message: `第${i + 1}条数据评估资料还没填写` });
-        flag = false;
-        throw new Error();
-      } else {
-        flag = true;
-      }
-    });
+    try {
+      state.peopleList.forEach((v, i) => {
+        if (v.recordData.evaluationInfo.length < 1) {
+          Notify({ type: 'warning', message: `第${i + 1}条数据评估资料还没填写` });
+          flag = false;
+          throw new Error();
+        } else {
+          flag = true;
+        }
+      });
+    } catch (e) {
+      console.error(e);
+    }
 
     if (flag) {
       state.recordDataList.length = 0;
@@ -138,6 +141,7 @@ export default {
         newObj.recordData.push(v);
       });
       state.recordDataList.push(newObj);
+      state.flag = true;
     }
   }
 };

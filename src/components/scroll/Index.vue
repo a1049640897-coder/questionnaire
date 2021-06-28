@@ -105,7 +105,6 @@ export default {
     data () {
       setTimeout(() => {
         this.refresh();
-        console.info('refresh');
       }, this.refreshDelay);
     }
   }

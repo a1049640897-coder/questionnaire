@@ -189,11 +189,8 @@ export default {
       };
       this.submitList.push(newObj);
       this.showPicker = false;
-      console.log('数据', this.zItem);
-      console.info('提交的数据', this.submitList);
     },
     cancelPicker () {
-      console.info('清楚');
       this.showPicker = false;
       this.list.forEach((v, i) => {
         if (i === this.index) {
@@ -216,14 +213,12 @@ export default {
       this.submitList = JSON.parse(JSON.stringify(this.submitList.filter((item) => { return item.optionId !== this.zItem.optionId; })));
     },
     onConfirm (value) {
-      console.info('values', value);
       const { text, unit } = value;
       this.unit = unit;
       this.unitTitle = text;
       this.showCount = false;
     },
     checkData (index, nIndex, zIndex, val) {
-      console.info('点击', val);
       this.zItem = val;
       this.index = index;
       this.nIndex = nIndex;
@@ -260,7 +255,6 @@ export default {
       } finally {
         this.$loading.hide();
       }
-      console.info('一俩数据', this.list);
     }
   },
   created () {

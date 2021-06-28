@@ -154,7 +154,6 @@ export default {
                   // 清楚list里对应的值
                   let newArr = this.mutipleList.filter((p) => p.optionId !== n.optionId);
                   this.mutipleList = newArr;
-                  console.log(newArr);
                   this.$set(n, 'isChecked', false);
                 } else {
                   Notify({ type: 'warning', message: '该选项不能超过3项' });
@@ -174,7 +173,6 @@ export default {
                     // 清楚list里对应的值
                     let newArr = this.mutipleList.filter((p) => p.optionId !== n.optionId);
                     this.mutipleList = newArr;
-                    console.log('newArr', this.mutipleList);
                     this.$set(n, 'isChecked', false);
                   } else {
                     this.$set(n, 'isChecked', true);
@@ -189,7 +187,6 @@ export default {
           }
         });
       }
-      console.log('mutipleList', this.mutipleList);
     },
     async getData () {
       this.$loading.show();

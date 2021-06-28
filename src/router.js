@@ -1,10 +1,12 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-const Home = () => import('views/home/Index.vue'); // 首页
-const People = () => import('views/peoplePage/Index.vue'); // 人员问卷列表
-const AddInfo = () => import('views/addInfo/Index'); //  人员增加资料
-const Test = () => import('views/test/Index.vue');
-
+// const Home = () => import('views/home/Index.vue'); // 首页
+// const People = () => import('views/peoplePage/Index.vue'); // 人员问卷列表
+// const AddInfo = () => import('views/addInfo/Index'); //  人员增加资料
+// const Test = () => import('views/test/Index.vue');
+import Home from 'views/home/Index.vue';
+import People from 'views/peoplePage/Index.vue';
+import AddInfo from 'views/addInfo/Index';
 Vue.use(Router);
 
 const router = new Router({
@@ -34,16 +36,7 @@ const router = new Router({
       meta: {
         title: '人员问卷'
       }
-    },
-    {
-      path: '/test',
-      name: 'test',
-      component: Test,
-      meta: {
-        title: '测试页面'
-      }
     }
-
   ]
 });
 

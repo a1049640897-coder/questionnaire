@@ -168,7 +168,6 @@ export default {
             this.quesnaireList.push(newObj);
           }
         }
-        console.log('queList', this.quesnaireList);
       } catch (e) {
         console.error(e);
         this.$loading.hide();
@@ -189,7 +188,6 @@ export default {
       });
     },
     onConfirm (value) {
-      console.log(value);
       const { text } = value;
       this.value = text;
       this.showPicker = false;

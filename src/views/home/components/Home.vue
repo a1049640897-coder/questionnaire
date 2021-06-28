@@ -196,6 +196,9 @@ export default {
   .home-box {
    .container{
      @include container
+     .wrapper {
+       padding: 0px;
+     }
    }
   }
 </style>

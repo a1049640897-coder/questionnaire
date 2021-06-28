@@ -14,6 +14,7 @@ const state = {
   baseInfo: [], // 基本信息
   baseInfoMutifly: [], // 基本信息多选
   randomNo: 4, // 户内人员编号
+  flag: false, // 判断是否完成
   quesnaireIsSuceessSubmit: false, // 问卷是否成功提交
   recordDataList: [] // 重新排序的数组
 };

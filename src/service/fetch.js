@@ -6,7 +6,6 @@ import { host } from 'utils/host';
 import { generateUUID, getDev } from 'utils/functions';
 
 let baseURL = `${host[`api-host-${getDev()}`]}${host[`api-base-${getDev()}`]}/`;
-console.log('baseUrl', baseURL);
 const service = axios.create({
   baseURL: baseURL,
   timeout: 60000

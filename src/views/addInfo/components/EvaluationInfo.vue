@@ -157,7 +157,6 @@ export default {
         });
         this.saveData();
         this.compareData();
-        console.log('评估数据', this.list);
       } catch (e) {
         console.error(e);
         this.$loading.hide();

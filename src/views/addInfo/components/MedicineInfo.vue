@@ -4,51 +4,51 @@
       <scroll ref="wrapper"
               :listenScroll="true"
               :pullup="false"
-              :data="list"
+              :data="medicalListData"
       >
         <div>
-          <div class="item-box" v-for="(item,index) in list" :key="item.stemId">
+          <div class="item-box" v-for="(item,index) in list" :key="item.stemId" v-if="item.stemName!==title">
             <div class="title">
               {{item.stemName}}
             </div>
             <div class="btn-box">
               <div class="box-item" v-for="(nItem,nIndex) in item.stemList" :key="nIndex">
-                <div :class="zItem.isChecked?activeBtn:radioBtn" @click="checkData(index,nIndex,zIndex,zItem)"
+                <div :class="zItem.isChecked?activeBtn:radioBtn"  @click="checkData(index,nIndex,zIndex,zItem)"
                      v-for="(zItem,zIndex) in nItem.optionList" :key="zIndex">{{zItem.optionName}}
                 </div>
               </div>
             </div>
           </div>
-          <div>
-<!--          <div class="bottom-item-box">-->
-<!--            <div class="title">-->
-<!--              药物治疗-->
-<!--            </div>-->
-<!--            <div class="btn-box" v-for="(item,index) in medicalListData" :key="index">-->
-<!--              <div class="box-item">-->
-<!--                <div class="medical-box">-->
-<!--                  <div class="medical-top">-->
-<!--                    <div class="medical-title">-->
-<!--                      <input type="text" :placeholder="item.title" v-model="item.title">-->
-<!--                    </div>-->
-<!--                    <div class="medical-count">-->
-<!--                      {{item.count}}-->
-<!--                    </div>-->
-<!--                    <div class="medical-del">-->
-<!--                      <van-icon name="delete-o" @click="delMedicalDate(index)"/>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                  <div class="medical-remark">-->
-<!--                    <textarea :placeholder="item.remark" v-model="item.remark" style=" padding-left:10px;padding-top:10px;width: 100%;border-radius: 5px;height: 40px;border: 1px solid #cccccc;">-->
-<!--                    </textarea>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            <div class="add-btn">-->
-<!--              <van-button type="primary" @click="addMedicalData" icon="plus" round block>添加</van-button>-->
-<!--            </div>-->
-<!--          </div>-->
+          <div v-else>
+          <div class="bottom-item-box">
+            <div class="title">
+              药物治疗
+            </div>
+            <div class="btn-box" v-for="(item,index) in medicalListData" :key="index">
+              <div class="box-item">
+                <div class="medical-box">
+                  <div class="medical-top">
+                    <div class="medical-title">
+                      <input type="text" placeholder="药物名称" v-model="item.title">
+                    </div>
+                    <div class="medical-count" @click="showCount(item,item.selectedIndex,index)">
+                      {{item.count}}
+                    </div>
+                    <div class="medical-del">
+                      <van-icon name="delete-o" @click="delMedicalDate(index)"/>
+                    </div>
+                  </div>
+                  <div class="medical-remark">
+                    <textarea placeholder="请备注" v-model="item.remark" style=" resize:none;padding-left:10px;padding-top:10px;width: calc(100% - 10px);border-radius: 5px;height: 40px;border: 1px solid #cccccc;">
+                    </textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="add-btn">
+              <van-button type="primary" @click="addMedicalData" icon="plus" round block>添加</van-button>
+            </div>
+          </div>
           </div>
         </div>
       </scroll>
@@ -59,7 +59,8 @@
         show-toolbar
         :columns="columns"
         @confirm="onConfirm"
-        @cancel="showPicker = false"
+        @cancel="onCancel"
+        ref="picker"
       />
     </van-popup>
   </div>
@@ -70,7 +71,7 @@
 import { RadioGroup, Radio, Form, Field, Button, Icon, Picker, Popup } from 'vant';
 import Scroll from 'components/scroll/Index';
 import Footer from 'components/footer/Index';
-import { getCustomerReport } from 'apis/people/index.js';
+import { getCustomerReport, listEnumValues } from 'apis/common/index.js';
 import { UPDATEMEDICAL } from 'store/mutations-types.js';
 
 export default {
@@ -79,12 +80,18 @@ export default {
     return {
       radio: '',
       list: [],
-      columns: ['每周六此', '每周一次'],
+      title: '药物治疗',
+      columns: [],
       showPicker: false,
+      isAdd: true,
       medicalListData: [],
       submitList: [],
+      modiflyIndex: 0,
       activeBtn: 'active-radio-btn',
-      radioBtn: 'radio-btn'
+      radioBtn: 'radio-btn',
+      type: {
+        enumType: 'MedicineType'
+      }
     };
   },
   components: {
@@ -103,12 +110,25 @@ export default {
     Scroll
   },
   methods: {
+
+    showCount (nItem, selectedIndex, index) {
+      console.info('index', selectedIndex);
+
+      this.showPicker = true;
+      this.$refs.picker.setColumnIndex(0, selectedIndex);
+      this.isAdd = false;
+      this.modiflyIndex = index;
+    },
     saveData () {
       const newObj = this.$store.state.peopleList.find(item => item.customerNo == this.$route.query.customerNo);
       if (newObj) {
         const arr = newObj.recordData.medicineInfo;
         for (let item of arr) {
-          this.submitList.push(item);
+          if (item.stemId !== 36) {
+            this.submitList.push(item);
+          } else {
+            this.medicalListData.push(item);
+          }
         }
       }
     },
@@ -138,6 +158,9 @@ export default {
       this.$loading.hide();
     },
     submitData () {
+      this.medicalListData.forEach((v, i) => {
+        this.submitList.push(v);
+      });
       const newObj = {
         list: this.submitList,
         customerNo: Number(this.$route.query.customerNo)
@@ -146,14 +169,32 @@ export default {
       history.back();
     },
     onConfirm (value) {
-      const newObj = {
-        title: '药物名称',
-        count: value,
-        remark: '请备注'
-      };
-      console.log('new', newObj);
-      this.medicalListData.push(newObj);
+      const { key, text } = value;
+      const index = this.columns.findIndex(item => item.key == key);
+      if (this.isAdd) {
+        const newObj = {
+          title: '',
+          count: text,
+          remark: '',
+          unit: key,
+          stemId: 36,
+          selectedIndex: index
+        };
+        this.medicalListData.push(newObj);
+      } else {
+        this.medicalListData.forEach((v, i) => {
+          if (i == this.modiflyIndex) {
+            v.count = text;
+            v.unit = key;
+            v.selectedIndex = index;
+          }
+        });
+      }
       this.showPicker = false;
+    },
+    onCancel () {
+      this.showPicker = false;
+      this.isAdd = true;
     },
     delMedicalDate (index) {
       this.medicalListData.splice(index, 1);
@@ -161,6 +202,7 @@ export default {
 
     addMedicalData () {
       this.showPicker = true;
+      this.isAdd = true;
     },
 
     checkData (index, nIndex, zIndex, val) {
@@ -190,7 +232,17 @@ export default {
           });
         }
       });
-      console.info('提价的数据', this.submitList);
+    },
+    async getListEnumValues () {
+      try {
+        const { data } = await listEnumValues(this.type);
+        data.forEach((v, i) => {
+          v.text = v.value;
+          this.columns.push(v);
+        });
+      } catch (e) {
+        console.error(e);
+      }
     },
     async getData () {
       this.$loading.show();
@@ -216,6 +268,7 @@ export default {
   },
   created () {
     this.getData();
+    this.getListEnumValues();
   }
 };
 </script>

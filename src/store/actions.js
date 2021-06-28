@@ -10,14 +10,23 @@ export default {
 
   [types.SUBMITQUESNAIRE] ({ commit, state }, payload) {
     commit(types.RESORECORDDATA);
-    const newObj = {
-      communityId: state.communityId,
-      buildingName: state.buildingName,
-      roomNo: state.roomNo,
-      recordDataList: state.recordDataList
-    };
-    const { data } = saveCustomerRecord(newObj);
-    console.info('new', data);
+    if (state.flag) {
+      const newObj = {
+        communityId: state.communityId,
+        buildingName: state.buildingName,
+        roomNo: state.roomNo,
+        recordDataList: state.recordDataList
+      };
+      saveCustomerRecord(newObj).then(res => {
+        const { code, message } = res;
+        if (code == 0) {
+          Notify({ type: 'success', message: '问卷提交成功!' });
+          window.location.reload();
+        } else {
+          Notify({ type: 'danger', message: `${message}` });
+        }
+      });
+    }
   }
 
 };
