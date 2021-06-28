@@ -9,7 +9,8 @@ export default {
   components: {
   },
   created: function () {
-    this.$router.push('/'); // 注意！ 你这个代码的意思就是每次刷新的时候进入'/login'，去掉就可以了
+    console.info('页面刷新');
+    this.$router.push('/');
   }
 };
 </script>

@@ -1,11 +1,14 @@
+
+$vh: calc(100vh - var(--vh-offset, 0px));
+
 @mixin common {
   width: 100%;
   padding: 15px 15px 0px 15px;
   box-sizing: border-box;
   background-color: #F7F7F7;
-  height: 100vh;
+  height: $vh;
   .wrapper {
-    height: calc(100vh - 75px );
+    height: calc(#{$vh} - 75px );
     overflow: hidden;
     box-sizing: border-box;
     padding: 10px;
@@ -77,7 +80,7 @@
   .wrapper {
     margin-top: 10px;
     @extend .base-info;
-    height: calc( 100vh - 100px);
+    height: calc( #{$vh} - 100px);
     overflow: hidden;
   }
   .icon-add {

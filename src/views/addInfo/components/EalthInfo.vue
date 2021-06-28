@@ -172,7 +172,7 @@ export default {
   .evalute-info-box {
     @include common;
     .wrapper {
-      height: calc(100vh - 110px );
+      height: calc(#{$vh} - 110px );
       background: #fff;
     }
     .title {

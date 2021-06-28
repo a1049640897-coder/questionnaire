@@ -1,28 +1,27 @@
 <template>
   <div class="home-box">
     <div class="container">
-      <div class="base-info">
-      <p>业主问卷</p>
-      <van-swipe-cell :disabled="true">
-        <div class="cell-base">
-          <div class="base-left">
-            基础资料
-            <span>*</span>
-          </div>
-          <div class="base-right">
-            <span>{{baseInfoIsCompeleted?'已完成':''}}</span>
-            <van-icon name="arrow" @click="toBaseInfo"/>
-          </div>
-        </div>
-      </van-swipe-cell>
-    </div>
-
       <scroll ref="wrapper"
               :listenScroll="true"
               :pullup="false"
               :data="$store.state.peopleList"
       >
         <div>
+          <div class="base-info">
+            <p>业主问卷</p>
+            <van-swipe-cell :disabled="true">
+              <div class="cell-base">
+                <div class="base-left">
+                  基础资料
+                  <span>*</span>
+                </div>
+                <div class="base-right">
+                  <span>{{baseInfoIsCompeleted?'已完成':''}}</span>
+                  <van-icon name="arrow" @click="toBaseInfo"/>
+                </div>
+              </div>
+            </van-swipe-cell>
+          </div>
           <p>人员问卷</p>
           <div class="item-box">
             <van-swipe-cell v-for="(item, index) in $store.state.peopleList " :key="index">

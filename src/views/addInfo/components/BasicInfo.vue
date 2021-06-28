@@ -3,6 +3,7 @@
     <div class="base-info-box">
       <scroll ref="wrapper"
               :listenScroll="true"
+              :height="Height"
               :pullup="false"
               :data="list">
         <div>
@@ -57,6 +58,9 @@ export default {
 
   },
   computed: {
+    Height () {
+      return (window.innerHeight - 75) + 'px';
+    }
   },
   methods: {
 
@@ -213,6 +217,11 @@ export default {
   },
   created () {
     this.getData();
+  },
+  mounted () {
+    // let wrapperHeight = window.innerHeight - 75;
+    // this.$refs.wrapper.height = `${wrapperHeight}px`;
+    // console.log('wrappre', this.$refs.wrapper);
   }
 };
 </script>

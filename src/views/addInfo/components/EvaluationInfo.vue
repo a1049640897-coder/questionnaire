@@ -178,7 +178,7 @@ export default {
     @include common;
 
     .wrapper {
-      height: calc(100vh - 110px);
+      height: calc(#{$vh} - 110px);
       overflow: hidden;
       background-color: #ffffff;
     }

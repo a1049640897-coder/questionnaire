@@ -1,5 +1,5 @@
 <template>
-  <div ref="wrapper" class="wrapper">
+  <div ref="wrapper" class="wrapper" :style="height">
     <slot></slot><!--分发内容-->
   </div>
 </template>
@@ -10,6 +10,10 @@ import BScroll from 'better-scroll';// 引入better-scroll
 export default {
   name: 'Index',
   props: {
+    height: {
+      type: String,
+      default: ''
+    },
     probeType: {// probeType 为 3 的时候，不仅在屏幕滑动的过程中，而且在 momentum 滚动动画运行过程中实时派发 scroll 事件。
       type: Number,
       default: 3
