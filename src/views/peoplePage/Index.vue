@@ -10,7 +10,7 @@
           <p>问卷内容</p>
           <div class="item-box">
             <van-swipe-cell v-for="(item, index) in quesnaireList" :key="index" :disabled="true">
-              <div class="cell-base">
+              <div class="cell-base" @click="toAddDetail(item.type)">
                 <div class="base-left">
                   {{item.title}}
                   <span style="" v-if="item.required">*</span>
@@ -22,7 +22,7 @@
                   </span>
                   <span v-else>
                   </span>
-                  <van-icon @click="toAddDetail(item.type)" name="arrow"/>
+                  <van-icon name="arrow"/>
                 </div>
               </div>
             </van-swipe-cell>

@@ -1,7 +1,6 @@
 'use strict';
-let publicPath = './';
 module.exports = {
-  publicPath: publicPath,
+  publicPath: './',
   // 先写一个configureWebpack 表示你准备配置webpageconfig
   configureWebpack: {
     // 配置路径相关的时候用resolve 可以解决路径相关的问题
@@ -24,6 +23,7 @@ module.exports = {
     }
   },
   devServer: {
+    port: 18080,
     proxy: {
       '/lci': {
         // target: 'https://api.tianlunzhimei.com',

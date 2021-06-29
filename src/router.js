@@ -6,21 +6,23 @@ import Router from 'vue-router';
 const Home = () => import(/* webpackChunkName:  "[request]" */ 'views/home/Index.vue'); // 首页
 const People = () => import(/* webpackChunkName:  "[request]" */ 'views/peoplePage/Index.vue'); // 人员问卷列表
 const AddInfo = () => import(/* webpackChunkName:  "[request]" */ 'views/addInfo/Index'); //  人员增加资料
+const NotFoundComponent = () => import(/* webpackChunkName:  "[request]" */ 'views/notFound/Index'); //  人员增加资料
 // import Home from 'views/home/Index.vue';
 // import People from 'views/peoplePage/Index.vue';
 // import AddInfo from 'views/addInfo/Index';
 Vue.use(Router);
 
 const router = new Router({
-  mode: 'history',
+  mode: 'hash',
   base: process.env.BASE_URL,
   routes: [
+    { path: '*', component: NotFoundComponent },
     {
       path: '',
-      redirect: '/home'
+      redirect: '/community'
     },
     {
-      path: '/home',
+      path: '/community',
       name: 'home',
       component: Home,
       meta: {

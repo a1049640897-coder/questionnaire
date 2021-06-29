@@ -7,7 +7,7 @@
               :data="$store.state.peopleList"
       >
         <div>
-          <div class="base-info">
+          <div class="base-info" @click="toBaseInfo">
             <p>业主问卷</p>
             <van-swipe-cell :disabled="true">
               <div class="cell-base">
@@ -17,7 +17,7 @@
                 </div>
                 <div class="base-right">
                   <span>{{baseInfoIsCompeleted?'已完成':''}}</span>
-                  <van-icon name="arrow" @click="toBaseInfo"/>
+                  <van-icon name="arrow"/>
                 </div>
               </div>
             </van-swipe-cell>
@@ -25,14 +25,14 @@
           <p>人员问卷</p>
           <div class="item-box">
             <van-swipe-cell v-for="(item, index) in $store.state.peopleList " :key="index">
-              <div class="cell-base">
+              <div class="cell-base" @click="toAddDetail(item.customerNo)">
                 <div class="base-left">
                   {{item.text}}
                   <span style="opacity: 0">*</span>
                 </div>
                 <div class="base-right">
                   <span></span>
-                  <van-icon @click="toAddDetail(item.customerNo)" name="arrow"/>
+                  <van-icon name="arrow"/>
                 </div>
               </div>
               <template #right>

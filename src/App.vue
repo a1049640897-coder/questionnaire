@@ -1,6 +1,6 @@
 <template>
   <div id="app"  v-cloak>
-    <router-view v-wechat-title="$route.meta.title"></router-view>
+    <router-view v-wechat-title="$route.meta.title" :key="$route.fullpath"></router-view>
   </div>
 </template>
 <script>
@@ -9,7 +9,6 @@ export default {
   components: {
   },
   created: function () {
-    console.info('页面刷新');
     this.$router.push('/');
   }
 };
