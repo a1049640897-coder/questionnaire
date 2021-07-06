@@ -36,7 +36,7 @@
                 </div>
               </div>
               <template #right>
-                <van-button square type="danger" @click="deletePeople(item.customerNo)" text="删除" />
+                <van-button square type="danger" @click="deletePeople(item.customerNo)" text="删除"/>
               </template>
             </van-swipe-cell>
           </div>
@@ -101,7 +101,8 @@ export default {
       value: '',
       columns: [
         { text: '本人', id: 1 }, { text: '父亲', id: 2 }, { text: '母亲', id: 3 },
-        { text: '儿子', id: 4 }, { text: '女儿', id: 5 }, { text: '其他', id: 6 }],
+        { text: '儿子', id: 4 }, { text: '女儿', id: 5 }, { text: '其他', id: 6 }
+      ],
       showPicker: false,
       peopleList: [],
       addShow: true,
@@ -192,12 +193,12 @@ export default {
 </script>
 <style lang="scss" scoped>
   @import "styles/mixin.scss";
+
   .home-box {
-   .container{
-     @include container
-     .wrapper {
-       padding: 0px;
-     }
-   }
+    .container {
+      @include container.wrapper {
+        padding: 0px;
+      }
+    }
   }
 </style>

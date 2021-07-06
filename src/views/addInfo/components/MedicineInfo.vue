@@ -29,7 +29,7 @@
                 <div class="medical-box">
                   <div class="medical-top">
                     <div class="medical-title">
-                      <input type="text" placeholder="药物名称" v-model="item.title">
+                      <input type="text" placeholder="药物名称" v-model="item.name">
                     </div>
                     <div class="medical-count" @click="showCount(item,item.selectedIndex,index)">
                       {{item.count}}
@@ -39,7 +39,7 @@
                     </div>
                   </div>
                   <div class="medical-remark">
-                    <textarea placeholder="请备注" v-model="item.remark" style=" resize:none;padding-left:10px;padding-top:10px;width: calc(100% - 10px);border-radius: 5px;height: 40px;border: 1px solid #cccccc;">
+                    <textarea placeholder="请备注" v-model="item.remarks" style=" resize:none;padding-left:10px;padding-top:10px;width: calc(100% - 10px);border-radius: 5px;height: 40px;border: 1px solid #cccccc;">
                     </textarea>
                   </div>
                 </div>
@@ -143,8 +143,8 @@ export default {
               n.stemList.forEach((m, k) => {
                 m.optionList.forEach((k, q) => {
                   if (k.optionId == v.optionId) {
-                    if (v.remark) {
-                      this.$set(k, 'remark', v.remark);
+                    if (v.remarks) {
+                      this.$set(k, 'remarks', v.remarks);
                     } else {
                       this.$set(k, 'isChecked', true);
                     }
@@ -173,9 +173,9 @@ export default {
       const index = this.columns.findIndex(item => item.key == key);
       if (this.isAdd) {
         const newObj = {
-          title: '',
+          name: '',
           count: text,
-          remark: '',
+          remarks: '',
           unit: key,
           stemId: 36,
           selectedIndex: index
@@ -184,7 +184,7 @@ export default {
       } else {
         this.medicalListData.forEach((v, i) => {
           if (i == this.modiflyIndex) {
-            v.count = text;
+            v.times = text;
             v.unit = key;
             v.selectedIndex = index;
           }

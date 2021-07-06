@@ -10,8 +10,6 @@
             placeholder="选择社区"
             readonly
             clickable
-            @click="communityPicker = true"
-            :rules="[{ required: true, message: '请选择选择社区' }]"
           />
           <van-field
             readonly
@@ -76,8 +74,8 @@ export default {
       buildingName: '',
       roomNo: '',
       communityObj: {
-        name: '',
-        communityId: ''
+        name: '社区1',
+        communityId: '1'
       },
       communitys: [],
       buildings: []

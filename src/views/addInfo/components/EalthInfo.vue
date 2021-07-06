@@ -12,7 +12,7 @@
             <div class="box-list">
               <div v-for="(nItem,nIndex) in item.stemList[0].optionList" :key="nIndex">
                   <div :class="nItem.isChecked?activeBtn:radioBtn" v-if="nItem.optionType===1" @click="checkData(index,nIndex,nItem)" :key="nIndex">    {{nItem.optionName}}</div>
-                  <div v-else > <input type="text" placeholder="请输入其他症状"  v-model="nItem.remark" @blur="getInputData(nItem,nIndex)" class="input-box" :key="nIndex"></div>
+                  <div v-else > <input type="text" placeholder="请输入其他症状"  v-model="nItem.remarks" @blur="getInputData(nItem,nIndex)" class="input-box" :key="nIndex"></div>
               </div>
             </div>
           </div>
@@ -81,8 +81,8 @@ export default {
               n.stemList.forEach((m, k) => {
                 m.optionList.forEach((k, q) => {
                   if (k.optionId == v.optionId) {
-                    if (v.remark) {
-                      this.$set(k, 'remark', v.remark);
+                    if (v.remarks) {
+                      this.$set(k, 'remarks', v.remarks);
                     } else {
                       this.$set(k, 'isChecked', true);
                     }
@@ -102,11 +102,11 @@ export default {
           len--;
         }
       }
-      const { optionId, stemId, remark, optionType } = val;
+      const { optionId, stemId, remarks, optionType } = val;
       const newObj = {
         optionId,
         stemId,
-        remark,
+        remarks,
         optionType
       };
       this.submitList.push(newObj);

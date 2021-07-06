@@ -140,6 +140,9 @@ export default {
       state.baseInfo.forEach((v, i) => {
         newObj.recordData.push(v);
       });
+      state.baseInfoMutifly.forEach((v, i) => {
+        newObj.recordData.push(v);
+      });
       state.recordDataList.push(newObj);
       state.flag = true;
     }

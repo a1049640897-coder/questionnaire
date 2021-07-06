@@ -267,6 +267,7 @@ export default {
   @import "styles/mixin.scss";
   .van-popup--center {
     width: 90%;
+    border-radius: 5px;
   }
   .van-button--round {
     margin-bottom: 10px;
