@@ -17,7 +17,6 @@ export default {
         roomNo: state.roomNo,
         recordDataList: state.recordDataList
       };
-      console.info('提交的数据', newObj);
       saveCustomerRecord(newObj).then(res => {
         const { code, message } = res;
         if (code == 0) {

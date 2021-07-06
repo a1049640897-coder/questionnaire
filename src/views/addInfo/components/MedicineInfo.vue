@@ -112,8 +112,6 @@ export default {
   methods: {
 
     showCount (nItem, selectedIndex, index) {
-      console.info('index', selectedIndex);
-
       this.showPicker = true;
       this.$refs.picker.setColumnIndex(0, selectedIndex);
       this.isAdd = false;

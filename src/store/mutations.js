@@ -88,13 +88,6 @@ export default {
 
   [types.RESORECORDDATA] (state, payload) {
     // 判断评估资料已经填写完成
-    // for (let i = 0; i < state.peopleList; i++) {
-    //   console.info('哈哈', state.peopleList[i]);
-    //   if (state.peopleList[i].recordData.evaluationInfo.length < 1) {
-    //     Notify({ type: 'warning', message: `第${i}条数据评估资料还没填写` });
-    //   }
-    // }
-    // eslint-disable-next-line no-unused-vars
     let flag = true;
     try {
       state.peopleList.forEach((v, i) => {

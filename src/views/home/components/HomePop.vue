@@ -153,7 +153,6 @@ export default {
 
     onConfirm (value) {
       this.buildingName = value;
-      console.info(value);
       this.showPicker = false;
     },
     onConfirmComunity (value) {
